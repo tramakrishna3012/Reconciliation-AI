@@ -1,0 +1,71 @@
+# Reconciliation Agent Configuration
+embeddings:
+  model_name: sentence-transformers/all-MiniLM-L6-v2
+  # Where to store/load local sentence-transformers cache if offline
+  cache_dir: ./.models/embeddings
+
+index:
+  type: faiss
+  metric: cosine
+  persist_dir: ./.state/faiss_index
+
+reconciliation:
+  auto_merge_threshold: 0.90
+  suggest_merge_threshold: 0.70
+  # choose: simple, llama_cpp, gpt4all
+  llm_backend: gpt4all
+  # Only used if llm_backend == llama_cpp (or reused as a model path by gpt4all if set)
+  llama_cpp:
+    # Path to a local GGUF model file
+    # Example small model (download separately): ./.models/gpt4all/orca-mini-3b-gguf2-q4_0.gguf
+    model_path: ./.models/gpt4all/orca-mini-3b-gguf2-q4_0.gguf
+    n_ctx: 4096
+    n_threads: 6
+    n_gpu_layers: 0
+
+# Chatbot guardrail configuration
+chat_guard:
+  allow_off_topic: false
+  # If provided, overrides default keywords used to decide on-topic queries
+  keywords:
+    - reconcile
+    - reconciliation
+    - matching
+    - dedupe
+    - deduplication
+    - merge
+    - conflict
+    - faiss
+    - embedding
+    - embeddings
+    - sentence-transformers
+    - cosine
+    - index
+    - similarity
+    - csv
+    - json
+    - data quality
+    - normalization
+    - threshold
+    - auto-merge
+    - suggest-merge
+    - human-in-the-loop
+    - fastapi
+    - api
+    - endpoint
+    - llama
+    - gpt4all
+    - llm
+    - agent
+  refusal_message: >-
+    I’m scoped to reconciliation topics only: ingest/normalize CSV or JSON; embeddings; FAISS cosine similarity and indexing; merge thresholds (auto/suggest/no-merge); conflict resolution; human-in-the-loop; and this API. Please ask a reconciliation-related question.
+  generation:
+    temperature: 0.2
+    max_tokens: 256
+
+api:
+  host: 127.0.0.1
+  port: 8000
+
+logging:
+  level: INFO
